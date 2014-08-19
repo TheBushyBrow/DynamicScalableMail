@@ -1,0 +1,261 @@
+%%[ /* 20140822_BRCDA_WOutfits_Dynamic_EN-FR */
+
+var @omniture
+set @omniture = Concat("EV=", EMAIL_VERSION, Format(xtmonthnumeric,00), Format(xtday,00), xtyear, "&DI=", EMAIL_KEY, "&CD=", CARD_TYPE, "_", CUST_STATUS)
+
+
+/* Language (en/fr) - DO NOT UPDATE */
+if Substring(ADHOC5, 1, 6) == "French" 
+	then
+	set @language = "fr" 
+else
+	set @language = "en" 
+endif
+
+/* Make subscriber's email address passable to landing pages */
+var @passedEmail
+
+if _MessageContext == "LANDINGPAGE" 
+	then
+	set @LandingPage = "y"
+    set @passedEmail = RequestParameter("Email")
+    /* ----------------------------------------------------- */
+	set @language = "fr" /* Set language: en | fr -- HARDCODE for landing page */
+	/* ----------------------------------------------------- */ 
+elseif Empty(ADHOC5) 
+	then
+	set @language = "en" /* DO NOT EDIT THIS LINE */
+else
+	set @LandingPage = "n"
+	set @passedEmail = emailaddr
+endif
+
+
+/* Email var swaps based on language var */
+/* var templateType is there to show what template link was clicked in which version */
+var @locale,
+	@mobilehidePH,
+	@subjectLine,
+    @preHeader,
+    @linkPreHeader,
+    @templateType,
+    @legal
+
+if @language == "en"
+	then 
+	set @locale = "locale=en_CA"
+	set @subjectLine = "New looks for your fall lineup."
+	set @preHeader = "The newest outfits we love for the season."
+	set @linkPreHeader = Concat("http://bananarepublic.gapcanada.ca/browse/category.do?cid=87744", "&", @locale, "&tid=bcem000951&mdts=true", "&", @omniture)
+	set @templateType = "Template_1"
+	set @legal = "" 
+else
+	set @locale = "locale=fr_CA"
+	set @subjectLine = "De nouvelles tenues pour votre garde-robe d'automne."
+	set @preHeader = "Les plus récentes tenues saisonnières que nous aimons."
+	set @linkPreHeader = Concat("http://bananarepublic.gapcanada.ca/browse/category.do?cid=87744", "&", @locale, "&tid=bcem000951&mdts=true", "&", @omniture)
+	set @templateType = "Template_2"
+	set @legal = ""
+endif
+    
+
+/* Hide Preheader in Mobile = "y" or leave empty ("") to show preheader in Mobile  */
+/* BRCA wants to keep mobile PH hidden. Please keep on 'y'  */
+set @mobilehidePH = "y"
+
+
+/* Toggle (y/n) Mens Email */
+var @menMerch
+set @menMerch = "n"
+
+/* Declare and set all links */
+/* var locale because most links only dif between EN/FR is the locale */
+var @linkBG, @linkBanner 
+
+set @linkBG = @linkPreHeader
+set @linkBanner = Concat("http://bananarepublic.gapcanada.ca/browse/category.do?cid=1013420", "&", @locale, "&tid=bcem000951", "&", @omniture)
+
+
+/* Declare and set landing page links */
+var @linkLandingPageEN,
+    @linkLandingPageFR
+
+/* including templateType for tracking purposes */
+set @linkLandingPageEN = Concat("http://pages.email.gapinc.com/page.aspx?QS=773ed3059447707db94cc847883470a98155fd9c926d545dded7d2ef0b3ddf8c", "&Email=", @passedEmail, "&TemplateType=", @templateType)
+set @linkLandingPageFR = Concat("http://pages.email.gapinc.com/page.aspx?QS=773ed3059447707d2d200998e776eaa877f18035518f1e52f5c302279fcc0bca", "&Email=", @passedEmail, "&TemplateType=", @templateType)
+
+
+/* Toggle (y/n) Everyday Free Shipping content, generic (BRISSA) barcode */
+var @displayEDFS,
+    @bcGenDisplay
+
+set @displayEDFS = "y"
+set @bcGenDisplay = "n"
+
+
+/* Specify barcode ID and text, otherwise leave empty ("") */
+var @bar_code,
+    @coupon_code
+
+set @bar_code = ""
+set @coupon_code = ""
+
+
+/* Plain text version (paste into text content tab).:
+%%= ContentAreaByName("Shared Items\Shared Contents\Text_Files\201306_BRCA_TextFile_EN_FR") =%%
+*/
+
+]%%
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>%%= v(@subjectLine) =%%</title>
+	<style type="text/css">
+		/* Begin reset */
+		body { width:100% !important; -webkit-text-size-adjust:100%; -ms-text-size-adjust:100%; margin:0; padding:0; }
+		.ExternalClass { width:100%; }
+		.ExternalClass, .ExternalClass p, .ExternalClass span, .ExternalClass font, .ExternalClass a, .ExternalClass td, .ExternalClass div { line-height:100%; }
+		#backgroundTable { margin:0; padding:0; width:100% !important; line-height:100% !important; }
+		#outlook a { padding:0; }
+		/* End reset */
+
+		table td { border-collapse:collapse; }
+		@-ms-viewport { width:device-width; }
+
+		/* Use element[class="className"] instead of .className */
+		@media only screen and (max-width: 480px) {
+			table[id="backgroundTable"] { padding:5px 0 !important; }
+			table[class="wrapper"] { width:320px !important; }
+			*[class*="paddingreset"] { padding:0 !important; }
+			*[class*="padding-half"] { padding:0.5em !important; }
+			*[class*="pad-half-top"] { padding-top:0.5em !important; }
+			*[class*="pad-half-right"] { padding-right:0.5em !important; }
+			*[class*="pad-half-bottom"] { padding-bottom:0.5em !important; }
+			*[class*="pad-half-left"] { padding-left:0.5em !important; }
+
+			/* Hide from mobile */
+			*[class*="mobile-hidden"] { display:none; }
+
+			/* Hide from desktop */
+			div[class="show"], div[class="show"] img { display:block !important; margin:0 !important; padding:0 !important; overflow:visible !important; width:auto !important; max-height:inherit !important; height:auto !important; }
+
+			/* Scale image or text */
+			img[class="photo"] { width:100% !important; height:auto !important; }
+			img[class="photo90"] { width:90% !important; margin:0 auto !important; }
+			*[class*="text1"] { font-size:1em !important; line-height:1em !important; }
+			*[class*="text-75"] { font-size:0.75em !important; line-height:0.75em !important; }
+			*[class*="text-half"] { font-size:0.5em !important; line-height:0.5em !important; }
+
+			/* Stack */
+			td[class="block"] { width:100% !important; display:block !important; }
+			span[class="block"] { display:block !important; }
+			td[class="reset"] { border:none !important; margin:0 !important; padding:0 !important; width:100% !important; }
+			img[class="pad-top"] { padding-top: 5px !important;}
+
+			/* custom */
+		     td[class="w165"] { width:165px !important; height: auto !important; }
+		     td[class="w60"] {  width:60px !important; height: auto !important; font-size:11px !important; line-height:11px !important;  }
+		     td[class="w95"] { width:95px !important; height: auto !important; }
+
+		     td[class="w163"] { width:163px !important; height: auto !important; }
+		     td[class="w58"] {  width:58px !important; height: auto !important; font-size:9px !important; line-height:9px !important;  }
+		     td[class="w99"] { width:99px !important; height: auto !important; }
+		}
+	</style>
+</head>
+<body>
+<custom name="opencounter" type="tracking">
+<!-- Begin container and wrapper tables -->
+<table border="0" cellpadding="0" cellspacing="0" align="center" bgcolor="#FFFFFF" id="backgroundTable">
+  <tr>
+    <td><table border="0" cellpadding="0" cellspacing="0" width="640" align="center" class="wrapper">
+        <!-- Begin header -->
+        <tr>
+          <td> %%= ContentAreaByName("Shared Items\Shared Contents\Responsive\BRCA\Headers\20140201_BRCA_ResHeader") =%% </td>
+        </tr>
+        <!-- End header --> 
+        <!-- Begin modules -->
+        <tr>
+          <td><!-- ENGLISH VERSION --> 
+            %%[if @language == "en" then]%%
+            <table  border="0" cellpadding="0" cellspacing="0" width="640" align="center" class="wrapper">
+        	<!-- Banner -->
+        		<tr>
+                	<td><a href="%%=RedirectTo(@linkBanner)=%%" alias="EN Banner: 20% OFF* BR PICKS" target="_blank"><img alt="20% OFF* BR PICKS" src="http://image.email.bananarepublic.ca/lib/fe9e13707564037d76/m/13/20140822_BRCA_Banner_EN_01.gif" width="640" height="145" style="display:block;" border="0" class="photo" /></a></td>
+              	</tr>
+              	<tr>
+              		<td>
+              			<table border="0" cellpadding="0" cellspacing="0" width="640" class="wrapper">
+              				<tr>
+              					<td class="w165"><a href="%%=RedirectTo(@linkBanner)=%%" alias="EN Banner: Left of code" target="_blank"><img alt="CODE:" src="http://image.email.bananarepublic.ca/lib/fe9e13707564037d76/m/13/20140822_BRCA_Banner_EN_02.gif" width="330" height="24" style="display:block;" border="0" class="photo" /></a></td>
+
+              					<td class="w60" width="120" bgcolor="#000000" height="24" valign="middle" style="font-family:Arial,Helvetica,sans-serif; text-align:left; vertical-align:middle; font-size:20px; line-height:20px; mso-line-height-rule:exactly; color:#FFFFFF; background-color:#000000;">BRPICKS</td>
+
+              					<td class="w95"><a href="%%=RedirectTo(@linkBanner)=%%" alias="EN Banner: Right of code" target="_blank"><img alt="" src="http://image.email.bananarepublic.ca/lib/fe9e13707564037d76/m/13/20140822_BRCA_Banner_EN_04.gif" width="190" height="24" style="display:block;" border="0" class="photo" /></a></td>
+              				</tr>
+              			</table>
+              		</td>
+              	</tr>
+              	<tr>
+                	<td style="padding-bottom:15px;"><a href="%%=RedirectTo(@linkBanner)=%%" alias="EN Banner: Below Code" target="_blank"><img alt="" src="http://image.email.bananarepublic.ca/lib/fe9e13707564037d76/m/13/20140822_BRCA_Banner_EN_05.gif" width="640" height="40" style="display:block;" border="0" class="photo" /></a></td>
+              	</tr>
+        	<!-- /Banner -->
+              <tr>
+                <td><a href="%%=RedirectTo(@linkBG)=%%" alias="EN Body: The Fall" target="_blank"><img alt="THE FALL FORMULA" src="http://image.email.bananarepublic.ca/lib/fe9e13707564037d76/m/13/20140822_BRCA_WOutfits_EN_01.jpg" width="640" height="1036" style="display:block;" border="0" class="photo" /></a></td>
+              </tr>
+              <tr>
+                <td><a href="%%=RedirectTo(@linkBG)=%%" alias="EN Body: Shop Now" target="_blank"><img alt="SHOP NOW" src="http://image.email.bananarepublic.ca/lib/fe9e13707564037d76/m/13/20140822_BRCA_WOutfits_EN_02.jpg" width="640" height="1169" style="display:block;" border="0" class="photo" /></a></td>
+              </tr>
+            </table>
+            
+            <!-- /ENGLISH VERSION --> 
+            %%[else]%% 
+            <!-- FRENCH VERSION -->
+            
+            <table  border="0" cellpadding="0" cellspacing="0" width="640" align="center" class="wrapper">
+            <!-- Banner -->
+        		<tr>
+                	<td><a href="%%=RedirectTo(@linkBanner)=%%" alias="FR Banner: 20% OFF* BR PICKS" target="_blank"><img alt="-20%*" src="http://image.email.bananarepublic.ca/lib/fe9e13707564037d76/m/13/20140822_BRCA_Banner_FR_01.gif" width="640" height="154" style="display:block;" border="0" class="photo" /></a></td>
+              	</tr>
+              	<tr>
+              		<td>
+              			<table border="0" cellpadding="0" cellspacing="0" width="640" class="wrapper">
+              				<tr>
+              					<td class="w163"><a href="%%=RedirectTo(@linkBanner)=%%" alias="FR Banner: Left of code" target="_blank"><img alt="CODE:" src="http://image.email.bananarepublic.ca/lib/fe9e13707564037d76/m/13/20140822_BRCA_Banner_FR_02.gif" width="326" height="24" style="display:block;" border="0" class="photo" /></a></td>
+
+              					<td class="w58" width="116" bgcolor="#000000" height="24" valign="middle" style="font-family:Arial,Helvetica,sans-serif; text-align:left; vertical-align:middle; font-size:17px; line-height:17px; mso-line-height-rule:exactly; color:#FFFFFF; background-color:#000000;">BRPICKS</td>
+
+              					<td class="w99"><a href="%%=RedirectTo(@linkBanner)=%%" alias="FR Banner: Right of code" target="_blank"><img alt="" src="http://image.email.bananarepublic.ca/lib/fe9e13707564037d76/m/13/20140822_BRCA_Banner_FR_04.gif" width="198" height="24" style="display:block;" border="0" class="photo" /></a></td>
+              				</tr>
+              			</table>
+              		</td>
+              	</tr>
+              	<tr>
+                	<td style="padding-bottom:15px;"><a href="%%=RedirectTo(@linkBanner)=%%" alias="FR Banner: Below Code" target="_blank"><img alt="" src="http://image.email.bananarepublic.ca/lib/fe9e13707564037d76/m/13/20140822_BRCA_Banner_FR_05.gif" width="640" height="31" style="display:block;" border="0" class="photo" /></a></td>
+              	</tr>
+        	<!-- /Banner -->
+              <tr>
+                <td><a href="%%=RedirectTo(@linkBG)=%%" alias="FR Body: The Fall" target="_blank"><img alt="LE CODE DE L'AUTOMNE" src="http://image.email.bananarepublic.ca/lib/fe9e13707564037d76/m/13/20140822_BRCA_WOutfits_FR_01.jpg" width="640" height="1036" style="display:block;" border="0" class="photo" /></a></td>
+              </tr>
+              <tr>
+                <td><a href="%%=RedirectTo(@linkBG)=%%" alias="FR Body: Shop Now" target="_blank"><img alt="MAGASINER" src="http://image.email.bananarepublic.ca/lib/fe9e13707564037d76/m/13/20140822_BRCA_WOutfits_FR_02.jpg" width="640" height="1165" style="display:block;" border="0" class="photo" /></a></td>
+              </tr>
+            </table>
+            
+            <!-- /FRENCH VERSION --> 
+            %%[endif]%% </td>
+        </tr>
+        <!-- End modules --> 
+        <!-- Begin footer -->
+        <tr>
+          <td> %%= ContentAreaByName("Shared Items\Shared Contents\Responsive\BRCA\Footers\20140201_BRCA_ResFooter") =%% </td>
+        </tr>
+        <!-- End footer -->
+      </table></td>
+  </tr>
+</table>
+<!-- End container and wrapper tables -->
+</body>
+</html>
